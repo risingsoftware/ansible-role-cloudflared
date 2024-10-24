@@ -33,9 +33,13 @@
 - name: Restart systemd service
   when: cf_init_system == "systemd"
   ansible.builtin.systemd:
-    name: "{{ systemd_filename }}@{{ tunnel_name }}"
+    name: "{{ systemd_filename }}@{{ cf_tunnel.key }}"
     state: restarted
     enabled: true
+  loop: "{{ cf_tunnels | dict2items }}"
+  loop_control:
+    loop_var: cf_tunnel
+    label: "{{ cf_tunnel.key }}"
 
 - name: Start systemd service
   when: cf_init_system == "systemd"
